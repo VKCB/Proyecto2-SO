@@ -4,13 +4,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <pthread.h>
 #include <netinet/in.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <arpa/inet.h> // Para sockets
 
 #define N_NODOS 3
 #define MAX_PALABRAS 10000
+#define PUERTO_NODO1 5001
+#define PUERTO_NODO2 5002
+#define PUERTO_NODO3 5003
 
 typedef struct {
     char *data;
@@ -19,13 +22,6 @@ typedef struct {
     int *repeticiones;
     int n_palabras;
 } NodoArgs;
-
-
-void *nodo_proceso(void *args) {
-    NodoArgs *n = (NodoArgs *)args;
-    contar_palabras(n->data, n->len, &n->palabras, &n->repeticiones, &n->n_palabras);
-    pthread_exit(NULL);
-}
 
 typedef struct {
     char palabra[MAX_WORD];
@@ -54,6 +50,33 @@ void obtener_indices_lineas(const char *data, int len, int *indices, int n_linea
     indices[n_lineas] = len; // marca el final
 }
 
+// Nueva función para enviar parte a un nodo y recibir resultado
+void enviar_a_nodo(const char *data, int len, int puerto, char ***palabras, int **repeticiones, int *n_palabras) {
+    int sock = socket(AF_INET, SOCK_STREAM, 0);
+    struct sockaddr_in nodo_addr;
+    nodo_addr.sin_family = AF_INET;
+    nodo_addr.sin_port = htons(puerto);
+    nodo_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    connect(sock, (struct sockaddr *)&nodo_addr, sizeof(nodo_addr));
+
+    // Enviar tamaño y datos
+    write(sock, &len, sizeof(int));
+    write(sock, data, len);
+
+    // Recibir n_palabras
+    read(sock, n_palabras, sizeof(int));
+    *palabras = malloc(*n_palabras * sizeof(char*));
+    *repeticiones = malloc(*n_palabras * sizeof(int));
+    for (int i = 0; i < *n_palabras; i++) {
+        int plen;
+        read(sock, &plen, sizeof(int));
+        (*palabras)[i] = malloc(plen+1);
+        read(sock, (*palabras)[i], plen);
+        (*palabras)[i][plen] = 0;
+        read(sock, &((*repeticiones)[i]), sizeof(int));
+    }
+    close(sock);
+}
 
 int main() {
     int server_fd = iniciarServidor();
@@ -88,13 +111,11 @@ int main() {
         inicio = l_fin;
     }
     free(indices);
-  
 
-    pthread_t ths[N_NODOS];
-    for (int i = 0; i < N_NODOS; i++)
-        pthread_create(&ths[i], NULL, nodo_proceso, &nodos[i]);
-    for (int i = 0; i < N_NODOS; i++)
-        pthread_join(ths[i], NULL);
+    for (int i = 0; i < N_NODOS; i++) {
+        enviar_a_nodo(nodos[i].data, nodos[i].len, PUERTO_NODO1 + i,
+                      &nodos[i].palabras, &nodos[i].repeticiones, &nodos[i].n_palabras);
+    }
 
     // Junta todos los resultados
     PalabraGlobal *globales = malloc(MAX_PALABRAS * sizeof(PalabraGlobal));
