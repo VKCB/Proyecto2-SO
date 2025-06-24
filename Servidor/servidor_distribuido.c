@@ -91,6 +91,16 @@ int main() {
     recibirArchivo(client_fd, &archivo, &total);
     close(client_fd);
 
+    // Guardar el archivo descifrado en disco
+    FILE *fp_descifrado = fopen("archivo_descifrado.txt", "wb");
+    if (fp_descifrado) {
+        fwrite(archivo, 1, total, fp_descifrado);
+        fclose(fp_descifrado);
+        printf("Archivo descifrado guardado como 'archivo_descifrado.txt'\n");
+    } else {
+        perror("No se pudo guardar el archivo descifrado");
+    }
+
     //  dividir por líneas 
     int n_lineas = contar_lineas(archivo, total);
     int *indices = malloc((n_lineas + 1) * sizeof(int));

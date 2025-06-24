@@ -2,7 +2,7 @@
 #define SERVIDOR_H
 
 #define PORT 12345
-#define OUTPUT_FILE "archivo_cifrado.enc"
+#define OUTPUT_FILE "archivo_descifrado.txt"
 #define KEY 0xAA
 
 int iniciarServidor();

@@ -36,14 +36,19 @@ void xor_encrypt(char *data, int len) {
 
 void recibirArchivo(int socketDestino, char **buffer, int *len) {
     FILE *fp = fopen(OUTPUT_FILE, "wb");
+    FILE *fp_cifrado = fopen("archivo_cifrado.enc", "wb");
     char tmp[1024];
     int total = 0, n, cap = 1024 * 1024;
     char *buf = (char *)malloc(cap);
-    if (!fp || !buf) {
+    if (!fp || !fp_cifrado || !buf) {
         perror("No se puede abrir archivo o asignar memoria");
         exit(1);
     }
     while ((n = recv(socketDestino, tmp, sizeof(tmp), 0)) > 0) {
+        if (fwrite(tmp, 1, n, fp_cifrado) != n) {
+            perror("Error escribiendo archivo cifrado");
+            exit(1);
+        }
         xor_encrypt(tmp, n);
         fwrite(tmp, 1, n, fp);
         if (total + n > cap) {
@@ -58,6 +63,7 @@ void recibirArchivo(int socketDestino, char **buffer, int *len) {
         total += n;
     }
     fclose(fp);
+    fclose(fp_cifrado);
     *buffer = buf;
     *len = total;
 }

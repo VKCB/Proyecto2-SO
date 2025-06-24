@@ -28,7 +28,7 @@ void xor_encrypt(char *data, int len) {
 }
 
 void enviarArchivoCifrado(int socket, const char *rutaArchivo) {
-    FILE *fp = fopen(rutaArchivo, "r");
+    FILE *fp = fopen(rutaArchivo, "rb");
     char buffer[1024];
     int n;
 
