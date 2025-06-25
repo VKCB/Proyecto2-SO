@@ -92,25 +92,28 @@ int letra_a_pasos(char letra, int *x, int *y) {
 }
 
 // Programa principal: escribe "hola mundo" letra por letra
+// Elimina o comenta este main si usas la biblioteca desde otro programa
+/*
 int main() {
-    if (mrobot_init("/dev/ttyACM0") != 0) { // Inicializa el robot en el puerto serie
+    if (mrobot_init("/dev/ttyACM0") != 0) {
         perror("No se pudo abrir el dispositivo");
         return 1;
     }
 
-    char *texto = "hola mundo\n";           // Texto a escribir
-    for (int i = 0; texto[i]; i++) {        // Recorre cada letra
+    char *texto = "hola mundo\n";
+    for (int i = 0; texto[i]; i++) {
         int x, y;
-        if (letra_a_pasos(texto[i], &x, &y)) { // Si la letra existe en el mapeo
-            mrobot_move(x, y);              // Mueve X/Y a la posición de la letra
-            usleep(500000);                 // Espera a que llegue (ajusta según velocidad)
-            mrobot_press();                 // Presiona la tecla (servo Z)
-            usleep(700000);                 // Espera a que termine de presionar
+        if (letra_a_pasos(texto[i], &x, &y)) {
+            mrobot_move(x, y);
+            usleep(500000);
+            mrobot_press();
+            usleep(700000);
         } else {
-            printf("[ERROR] Letra no reconocida: '%c'\n", texto[i]); // Si la letra no existe
+            printf("[ERROR] Letra no reconocida: '%c'\n", texto[i]);
         }
     }
 
-    mrobot_close();                         // Cierra la conexión con el robot
+    mrobot_close();
     return 0;
 }
+*/
