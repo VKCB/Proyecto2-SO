@@ -2,13 +2,13 @@ import serial
 import time
 
 # --- Conexion arduino---
-puerto_serial = 'COM7'  
+puerto_serial = 'COM4'  
 baud_rate = 9600
 
 # Constantes físicas para el teclado
-q_x_cm = 4.0
-q_y_cm = 12.5
-distancia_teclas = 2.1  # cm
+q_x_cm = 11.3
+q_y_cm = 4.5
+distancia_teclas = 0.9  # cm
 pasos_por_cm = 114      # Ajusta según tu motor/sistema mecánico
 
 # Mapa de teclado con posición en cm (basado en Q)
@@ -73,10 +73,9 @@ def escribir_texto(ser, texto, delay=0.7):
             time.sleep(0.3)
             # Baja Z para presionar
             enviar_a_arduino(ser, pasos[0], pasos[1], 1)  # Z abajo
-            time.sleep(0.3)
-            # Sube Z
+            time.sleep(delay)  # espera el tiempo necesario para presionar
+            # Sube Z inmediatamente después
             enviar_a_arduino(ser, pasos[0], pasos[1], 0)  # Z arriba
-            time.sleep(delay)  # espera a que Arduino haga el movimiento y presione
 
 # --- Programa principal ---
 if __name__ == "__main__":

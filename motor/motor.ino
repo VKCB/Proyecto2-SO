@@ -8,7 +8,7 @@ AccelStepper stepperZ(AccelStepper::HALF4WIRE, 8, 9, 12, 13);
 // --- Variables ---
 long posX = 0;
 long posY = 0;
-const long presionarZ = 200;  // pasos hacia abajo para presionar
+const long presionarZ = 10;  // pasos hacia abajo para presionar
 const long subirZ = 0;
 
 // --- Setup ---
