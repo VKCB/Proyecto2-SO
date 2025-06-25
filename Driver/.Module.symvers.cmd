@@ -1,0 +1,1 @@
+savedcmd_/home/vale/Escritorio/P2SO/Proyecto2-SO/Driver/Module.symvers :=  scripts/mod/modpost -M -m -a      -o /home/vale/Escritorio/P2SO/Proyecto2-SO/Driver/Module.symvers -T /home/vale/Escritorio/P2SO/Proyecto2-SO/Driver/modules.order -i Module.symvers -e 
